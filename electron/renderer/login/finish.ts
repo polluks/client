@@ -13,7 +13,7 @@ class LoginFinish extends TypedReact.Component<LoginStatus, {}> {
   render() {
     return (
       AlertView({alert: this.props.alert}),
-      D.h2("Welcome to Keybase")
+      D.h2({}, "Welcome to Keybase")
     );
   }
 }

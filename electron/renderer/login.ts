@@ -52,7 +52,7 @@ class Login extends TypedReact.Component<{}, LoginState> {
     if (method == "keybase.1.locksmithUi.promptDeviceName") {
       this.state.step = LoginStep.DevicePrompt;
     // TODO: keybase.1.locksmithUi.selectSigner
-    }  else {
+    } else {
       this.sendError("Don't know how to handle method: " + method);
     }
     this.forceUpdate();
