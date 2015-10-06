@@ -4,14 +4,14 @@
 
 import engine from './native'
 
-import rpc from '../framed-msgpack-rpc/lib/main'
+import rpc from '../../react/framed-msgpack-rpc/lib/main'
 const {
   client: { Client: RpcClient },
   transport: { Transport: RpcTransport }
 } = rpc
 
 import { Buffer } from 'buffer'
-import NativeEventEmitter from '../commonAdapters/NativeEventEmitter'
+import NativeEventEmitter from '../../react/commonAdapters/NativeEventEmitter'
 
 class EngineError extends Error {
   constructor (err) {

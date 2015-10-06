@@ -4,7 +4,7 @@
   "description": "Keybase app",
   "author": "Gabriel Handford <gabrielh@gmail.com>",
   "contributors": [],
-  "main": "main.js",
+  "main": "bootstrapper.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/keybase/client.git"
@@ -26,7 +26,8 @@
     "electron-breakpoint": "^1.0.1",
     "jquery": "^2.1.4",
     "bootstrap": "^3.3.5",
-    "framed-msgpack-rpc": "^1.1.7"
+    "framed-msgpack-rpc": "^1.1.7",
+    "babel": "*"
   },
   "devDependencies": {
     "asar": "^0.7.2",
