@@ -29,7 +29,7 @@ export default class More extends Component {
           this.props.dispatch(navigateTo(['login']))
         }},
         {name: 'reset', onClick: () => {
-          require('../../engine').reset()
+          require('../../../react-common/engine').reset()
           console.log('Engine reset!');
         }},
         {name: 'Sign Out', onClick: () => {

@@ -1,7 +1,7 @@
 'use strict'
 
 import * as types from '../constants/loginActionTypes'
-import engine from '../engine'
+import engine from '../../react-common/engine'
 
 export function startLogin () {
   return {

@@ -2,7 +2,7 @@
 
 import * as types from '../constants/searchActionTypes'
 import { routeAppend, getCurrentURI } from './router'
-import engine from '../engine'
+import engine from '../../react-common/engine'
 
 export function pushNewSearch () {
   return function (dispatch, getState) {

@@ -8,7 +8,7 @@ import {
   Component
 } from 'react-native'
 
-import engine from '../engine'
+import engine from '../../react-common/engine'
 
 class GoTest extends Component {
   constructor () {
