@@ -3,10 +3,13 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-# git gofmt pre-commit hook
+# git gofmt -s pre-commit hook
 #
 # To use, store as .git/hooks/pre-commit inside your repository and make sure
 # it has execute permissions.
+#
+# You can also store it as .git/hooks/pre-push, if you commit a lot
+# and want to avoid the (noticeable) overhead.
 #
 # This script does not handle file names that contain spaces.
 
