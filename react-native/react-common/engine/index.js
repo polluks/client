@@ -12,7 +12,7 @@ const {
 
 import { Buffer } from 'buffer'
 import NativeEventEmitter from '../../react/commonAdapters/NativeEventEmitter'
-
+console.log(NativeEventEmitter)
 class EngineError extends Error {
   constructor (err) {
     if (!err) {
