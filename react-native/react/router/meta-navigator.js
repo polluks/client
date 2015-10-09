@@ -107,6 +107,7 @@ class MetaNavigator extends Component {
 
     let {componentAtTop, routeStack} = this.getComponentAtTop(rootRouteParser, store, uri)
 
+    // cjb -- wrap here.  for now, just take the componentAtTop and render it.
     return (
       <Navigator
         saveName='main'
