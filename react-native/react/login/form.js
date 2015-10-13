@@ -1,13 +1,15 @@
 'use strict'
 /* @flow */
 
-import React, { ActivityIndicatorIOS, Component, StyleSheet, View, Text, TextInput } from 'react-native'
+import React from '../react'
+import Base from '../base'
+import RenderLoginForm from './nativeLoginForm'
 import commonStyles from '../styles/common'
 import Switch from '../common-adapters/switch'
 import Button from '../common-adapters/button'
 import { submitUserPass } from '../actions/login'
 
-export default class LoginForm extends Component {
+export default class LoginForm extends Base {
   constructor (props) {
     super(props)
 

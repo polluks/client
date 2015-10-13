@@ -4,7 +4,8 @@
 // import React, { Component, Text, StyleSheet, View } from 'react-native'
 import React from '../react'
 import Base from '../base'
-import Render from './native'
+import RenderLoginContainer from './nativeLoginContainer'
+import RenderLoginForm from './nativeLoginForm'
 //import DevicePrompt from './device-prompt'
 //import SelectSigner from './select-signer'
 //import DisplaySecretWords from './display-secret-words'
@@ -16,14 +17,14 @@ export default class LoginContainer extends Base {
   }
 
   render () {
-    return Render(this.props, this.state)//props, state)
+    return RenderLoginContainer(this.props, this.state)
   }
 
   static parseRoute (store, currentPath, nextPath) {
     // TODO(mm): maybe these route names can be the constants we are already using?
     // e.g. state.SHOW_SECRET_WORDS
     const routes = {
-      // 'loginform': LoginForm.parseRoute,
+      'loginform': RenderLoginForm.parseRoute
       // 'device-prompt': DevicePrompt.parseRoute,
       // 'device-signer': SelectSigner.parseRoute,
       // 'show-secret-words': DisplaySecretWords.parseRoute
