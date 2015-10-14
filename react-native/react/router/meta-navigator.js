@@ -5,16 +5,20 @@
  * todo(mm) explain why we need a meta navigator
  */
 
-import React, { Component, Navigator, View } from 'react-native'
-import { connect } from 'react-redux/native'
+import Base from '../base'
+import React from '../react'
+import { connect } from 'react-redux'
 import Immutable from 'immutable'
 
-class MetaNavigator extends Component {
+class MetaNavigator extends Base {
   constructor () {
     super()
 
     this.state = {
     }
+
+    console.log('REACT')
+    console.log(React)
   }
 
   isParentOfRoute (routeParent, routeMaybeChild) {
@@ -53,7 +57,7 @@ class MetaNavigator extends Component {
     // TODO FIX this...
     // This is just to fix an error we get from the navigator complaining about
     // some var elgibleGestures not setup. This hack sets it up.
-    this.refs.navigator._handleTouchStart()
+    // this.refs.navigator._handleTouchStart()
   }
 
   findGlobalRouteHandler (currentPath) {
@@ -107,29 +111,10 @@ class MetaNavigator extends Component {
 
     let {componentAtTop, routeStack} = this.getComponentAtTop(rootRouteParser, store, uri)
 
-    // cjb -- wrap here.  for now, just take the componentAtTop and render it.
-    /*
-    return (
-      <Navigator
-        saveName='main'
-        ref='navigator'
-        initialRouteStack={routeStack.toJS()}
-        renderScene={(route, navigator) => {
-          return (
-            <View style={{flex: 1, marginTop: route.hideNavBar ? 0 : this.props.navBarHeight}}>
-              {React.createElement(connect(componentAtTop.mapStateToProps || (state => state))(route.component), {...route.props})}
-            </View>
-          )
-        }}
-        navigationBar={componentAtTop.hideNavBar ? null : NavBar}
-      />
-    )
+    return React.createElement(connect(componentAtTop.mapStateToProps || (state => state))(componentAtTop.component), {...componentAtTop.props})
   }
-  */
-  return ( {React.createElement(connect(componentAtTop.mapStateToProps || (state => state))(componentAtTop.component), {...componentAtTop.props})}
-  )
 }
-
+/*
 MetaNavigator.propTypes = {
   uri: React.PropTypes.object.isRequired,
   store: React.PropTypes.object.isRequired,
@@ -138,5 +123,5 @@ MetaNavigator.propTypes = {
   globalRoutes: React.PropTypes.object,
   navBarHeight: React.PropTypes.number.isRequired
 }
-
+*/
 export default MetaNavigator

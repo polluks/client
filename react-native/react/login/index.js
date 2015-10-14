@@ -54,9 +54,8 @@ export default class LoginContainer extends Base {
   }
 
 }
-
+/*
 LoginContainer.propTypes = {
-  /*
   onLoggedIn: React.PropTypes.func.isRequired,
   dispatch: React.PropTypes.func.isRequired,
   loginState: React.PropTypes.string.isRequired,
@@ -69,10 +68,9 @@ LoginContainer.propTypes = {
   response: React.PropTypes.object,
   signers: React.PropTypes.object,
   secretWords: React.PropTypes.string,
-  error: React.PropTypes.string\
-  */
+  error: React.PropTypes.string
 }
-/*
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

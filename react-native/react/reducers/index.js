@@ -10,7 +10,8 @@ import config from './config'
 import tabbedRouter from './tabbed-router.js'
 
 export default function (state, action) {
-  return combineReducers({
+  console.log('in reducers')
+  let foo = combineReducers({
     login,
     login2,
     devices,
@@ -19,4 +20,6 @@ export default function (state, action) {
     profile,
     config
   })(state, action)
+  console.log('returning reducers')
+  return foo
 }
