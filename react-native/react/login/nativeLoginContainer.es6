@@ -1,8 +1,6 @@
 'use strict'
 /* @flow */
 
-import React, { Component } from 'react'
-
 export default function (props, state) {
   console.log('inside login container')
   console.log(props)

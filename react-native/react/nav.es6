@@ -6,26 +6,22 @@ import { connect } from 'react-redux'
 import MetaNavigator from './router/meta-navigator'
 import React from 'react'
 import { StyleSheet } from 'react'
-/*
 import Folders from './tabs/folders'
 import Chat from './tabs/chat'
 import People from './tabs/people'
-import Devices from './tabs/devices'
-*/
+//import Devices from './tabs/devices'
 import NoTab from './tabs/no-tab'
-/*
-import More from './tabs/more'
-*/
+//import More from './tabs/more'
+
 import {FOLDER_TAB, CHAT_TAB, PEOPLE_TAB, DEVICES_TAB, MORE_TAB} from './constants/tabs'
 import { switchTab } from './actions/tabbed-router'
 
 const tabToRootRouteParse = {
-/*  [FOLDER_TAB]: Folders.parseRoute,
+  [FOLDER_TAB]: Folders.parseRoute,
   [CHAT_TAB]: Chat.parseRoute,
   [PEOPLE_TAB]: People.parseRoute,
-  [DEVICES_TAB]: Devices.parseRoute,
-  [MORE_TAB]: More.parseRoute
-*/
+//  [DEVICES_TAB]: Devices.parseRoute,
+//  [MORE_TAB]: More.parseRoute
 }
 
 export default class Nav extends Base {
