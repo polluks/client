@@ -3,7 +3,7 @@
 
 import Base from "./base"
 import { connect } from 'react-redux'
-import MetaNavigator from './router/meta-navigator.js'
+import MetaNavigator from './router/meta-navigator'
 import React from 'react'
 import { StyleSheet } from 'react'
 /*

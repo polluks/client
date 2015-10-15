@@ -2,7 +2,7 @@
 
 import TabBar from './native/tab-bar'
 import { connect } from 'react-redux/native'
-import MetaNavigator from './router/meta-navigator.js'
+import MetaNavigator from './router/meta-navigator'
 
 import Folders from './tabs/folders'
 import Chat from './tabs/chat'

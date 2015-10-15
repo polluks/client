@@ -1,5 +1,5 @@
 'use strict'
 /* @flow */
 
-import React from 'react-mobile'
+import React from 'react-native'
 export default React
