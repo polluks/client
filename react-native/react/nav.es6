@@ -15,6 +15,7 @@ import NoTab from './tabs/no-tab'
 
 import {FOLDER_TAB, CHAT_TAB, PEOPLE_TAB, DEVICES_TAB, MORE_TAB} from './constants/tabs'
 import { switchTab } from './actions/tabbed-router'
+import { LeftNav, AppBar } from 'material-ui'
 
 const tabToRootRouteParse = {
   [FOLDER_TAB]: Folders.parseRoute,
@@ -23,6 +24,12 @@ const tabToRootRouteParse = {
 //  [DEVICES_TAB]: Devices.parseRoute,
 //  [MORE_TAB]: More.parseRoute
 }
+
+const menuItems = [
+  { route: [FOLDER_TAB], text: 'Folders' },
+  { route: [CHAT_TAB], text: 'Chat' },
+  { route: [PEOPLE_TAB], text: 'People' }
+]
 
 export default class Nav extends Base {
   constructor(props) {
@@ -33,53 +40,34 @@ export default class Nav extends Base {
     return (
       <div>
         {React.createElement(
-          connect(state => state.tabbedRouter.getIn(['tabs', state.tabbedRouter.get('activeTab')]).toObject())(MetaNavigator),
+          connect((state) => {
+            console.log(state.tabbedRouter)
+          },
           {store: this.props.store, rootRouteParser: tabToRootRouteParse[activeTab] || NoTab.parseRoute}
         )}
       </div>
     )
   }
 
+  _onLeftNavChange (e, key, payload) {
+    console.log(this.props)
+    console.log('should switch to ' + payload.route)
+    this.props.dispatch(switchTab(payload.route))
+  }
+
   render () {
     const {dispatch} = this.props
     const activeTab = this.props.tabbedRouter.get('activeTab')
-
     console.log('in Nav render')
+    console.log(dispatch)
+    console.log(activeTab)
     return (
       <div>
-        <ul>
-          <li
-            title='Folders'
-            selected={activeTab === FOLDER_TAB}
-            onPress={() => dispatch(switchTab(FOLDER_TAB))}>
-            {this._renderContent('#414A8C', FOLDER_TAB)}
-          </li>
-          <li
-            title='Chat'
-            selected={activeTab === CHAT_TAB}
-            onPress={() => dispatch(switchTab(CHAT_TAB))}>
-            {this._renderContent('#417A8C', CHAT_TAB)}
-          </li>
-          <li
-            title='People'
-            systemIcon='contacts'
-            selected={activeTab === PEOPLE_TAB}
-            onPress={() => dispatch(switchTab(PEOPLE_TAB))}>
-            {this._renderContent('#214A8C', PEOPLE_TAB)}
-          </li>
-          <li
-            title='Devices'
-            selected={activeTab === DEVICES_TAB}
-            onPress={() => dispatch(switchTab(DEVICES_TAB))}>
-            {this._renderContent('#783E33', DEVICES_TAB)}
-          </li>
-          <li
-            title='more'
-            selected={activeTab === MORE_TAB}
-            onPress={() => dispatch(switchTab(MORE_TAB))}>
-            {this._renderContent('#21551C', MORE_TAB)}
-          </li>
-        </ul>
+      <LeftNav ref='leftNav'
+        docked={true}
+        menuItems={menuItems}
+        onChange={(...args) => this._onLeftNavChange(...args)} />
+      {this._renderContent('#aaaaaa', activeTab)}
       </div>
     )
   }

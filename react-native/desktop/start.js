@@ -43,6 +43,6 @@ bsync.init({
   });
 
   bsync
-    .watch('..//**/*')
+    .watch('../react/**/*')
     .on('change', bsync.reload);
 });
