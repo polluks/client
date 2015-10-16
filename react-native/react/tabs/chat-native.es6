@@ -3,7 +3,7 @@
 
 import React from 'react'
 
-export default function (props, state) {
+export default function () {
   return (
     <div>
       <p> Chat goes here </p>

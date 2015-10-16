@@ -9,7 +9,7 @@ export default class Folders extends Base {
     super(props)
   }
   render () {
-    return Render(this.props, this.state)
+    return Render.apply(this)
   }
 
   // TODO(mm): annotate types

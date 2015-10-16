@@ -9,7 +9,7 @@ export default class Chat extends Base {
     super(props)
   }
   render () {
-    return Render(this.props, this.state)
+    return Render.apply(this)
   }
 
   static parseRoute (store, currentPath, nextPath) {
