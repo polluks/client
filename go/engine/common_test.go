@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/keybase/client/go/libkb"
 )
@@ -231,6 +232,8 @@ func testEngineWithSecretStore(
 	if !testSecretUI.CalledGetSecret {
 		t.Fatal("GetSecret() unexpectedly not called")
 	}
+
+	time.Sleep(1 * time.Second)
 
 	tc.ResetLoginState()
 
