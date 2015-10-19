@@ -40,7 +40,14 @@ export default class Nav extends Base {
     return (
       <div>
         {React.createElement(
-          connect(state => state.tabbedRouter.getIn(['tabs', state.tabbedRouter.get('activeTab')]).toObject())(MetaNavigator), {
+          connect(state => {
+            let elem = state.tabbedRouter.get('activeTab')
+            // FIXME: After initial load, why do we end up with an array here?
+            if (Array.isArray(elem)) {
+              elem = elem[0]
+            }
+            return state.tabbedRouter.getIn(['tabs', elem]).toObject()
+          })(MetaNavigator), {
             store: this.props.store,
             rootRouteParser: tabToRootRouteParse[activeTab] || NoTab.parseRoute
           }
@@ -50,7 +57,6 @@ export default class Nav extends Base {
   }
 
   _onLeftNavChange (e, key, payload) {
-    console.log(this.props)
     console.log('should switch to ' + payload.route)
     this.props.dispatch(switchTab(payload.route))
   }
@@ -58,9 +64,6 @@ export default class Nav extends Base {
   render () {
     const {dispatch} = this.props
     const activeTab = this.props.tabbedRouter.get('activeTab')
-    console.log('in Nav render')
-    console.log(dispatch)
-    console.log(activeTab)
     return (
       <div>
       <LeftNav ref='leftNav'
