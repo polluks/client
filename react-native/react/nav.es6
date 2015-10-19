@@ -40,10 +40,10 @@ export default class Nav extends Base {
     return (
       <div>
         {React.createElement(
-          connect((state) => {
-            console.log(state.tabbedRouter)
-          },
-          {store: this.props.store, rootRouteParser: tabToRootRouteParse[activeTab] || NoTab.parseRoute}
+          connect(state => state.tabbedRouter.getIn(['tabs', state.tabbedRouter.get('activeTab')]).toObject())(MetaNavigator), {
+            store: this.props.store,
+            rootRouteParser: tabToRootRouteParse[activeTab] || NoTab.parseRoute
+          }
         )}
       </div>
     )
