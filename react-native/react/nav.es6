@@ -100,6 +100,7 @@ export default class Nav extends Base {
       tabsContainer: {
         position: 'relative',
         paddingLeft: 0,
+        width: '70%'
       },
     };
 

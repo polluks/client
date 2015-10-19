@@ -10,7 +10,7 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function() {
   console.log('app ready')
-  mainWindow = new BrowserWindow({width: 1200, height: 900})
+  mainWindow = new BrowserWindow({width: 1600, height: 1200})
   var filename = 'file://' + __dirname + '/../renderer/index.html'
   console.log(filename)
   mainWindow.loadUrl(filename)
