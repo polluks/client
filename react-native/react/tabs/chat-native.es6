@@ -3,10 +3,10 @@
 
 import React from 'react'
 
-export default function () {
+export default function (props, state) {
   return (
     <div>
-      <p> Chat goes here </p>
+      <h2> Chat goes here </h2>
       <p> Always Money in the Banana Stand </p>
     </div>
   )
