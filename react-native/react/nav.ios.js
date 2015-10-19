@@ -10,7 +10,7 @@ import Chat from './tabs/chat'
 import People from './tabs/people'
 import Devices from './tabs/devices'
 import NoTab from './tabs/no-tab'
-import More from './tabs/more'
+import More from './tabs/more/index-native.js'
 
 import { switchTab } from './actions/tabbed-router'
 import { navigateUp } from './actions/router'
