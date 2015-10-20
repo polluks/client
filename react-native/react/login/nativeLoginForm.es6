@@ -20,14 +20,10 @@ export default class LoginForm extends Base {
   }
 
   submit () {
-    console.log('in submit')
-    console.log(this.state)
-    console.log(this.props)
     this.props.onSubmit(this.state.username, this.state.passphrase, this.state.storeSecret)
   }
 
   render () {
-
     const activity = this.props.waitingForServer
       ? <CircularProgress mode="indeterminate" />
       : null
@@ -36,22 +32,20 @@ export default class LoginForm extends Base {
       ? <RaisedButton label='Login' disabled={true} />
     : <RaisedButton onClick={() => this.submit()} label='Login' />
 
-    console.log('username')
-    console.log(this.state.username)
-    console.log(this.state.passphrase)
     return (
       <div>
         <TextField
-          onChange={(e) => this.setState({username: e.target.value})}
+          ref='username'
+          onChange={e => this.setState({username: e.target.value})}
           placeholder='Username'
           hintText='Username'
           floatingLabelText='Username'
           value={this.state.username} />
 
         <TextField
-          onChange={(e) => this.setState({passphrase: e.target.value})}
-          placeholder='Passphrase'
           ref='passphrase'
+          onChange={e => this.setState({passphrase: e.target.value})}
+          placeholder='Passphrase'
           hintText='Passphrase'
           floatingLabelText='Passphrase'
           type='password'
