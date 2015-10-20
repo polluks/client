@@ -2,5 +2,5 @@
 /* @flow */
 
 import EventEmitter from 'events'
-export default EventEmitter
-
+let RCTDeviceEventEmitter = new EventEmitter()
+module.exports = RCTDeviceEventEmitter

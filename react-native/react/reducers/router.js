@@ -60,6 +60,8 @@ export default function (state = initialState, action) {
       return state.update('history', (history) => history.count() > 1 ? history.pop() : parseUri([]))
         .set('uri', lastUri)
     case routerTypes.NAVIGATE:
+      console.log('in reducer, action is')
+      console.log(action)
       return stateWithHistory.set('uri', parseUri(action.uri))
     case routerTypes.NAVIGATE_APPEND:
       return stateWithHistory.update('uri', (uri) => uri.push(parsePath(action.topRoute)))

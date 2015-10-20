@@ -17,10 +17,11 @@ export default class LoginContainer extends Base {
   }
 
   render () {
-    return RenderLoginContainer(this.props, this.state)
+    return RenderLoginContainer.apply(this)
   }
 
   static parseRoute (store, currentPath, nextPath) {
+    console.log('in login parseRoute')
     // TODO(mm): maybe these route names can be the constants we are already using?
     // e.g. state.SHOW_SECRET_WORDS
     const routes = {
@@ -29,7 +30,7 @@ export default class LoginContainer extends Base {
       // 'device-signer': SelectSigner.parseRoute,
       // 'show-secret-words': DisplaySecretWords.parseRoute
     }
-
+    console.log(routes)
     // TODO(mm): figure out how this interacts with redux
     const componentAtTop = {
       title: 'Keybase',
@@ -45,7 +46,7 @@ export default class LoginContainer extends Base {
     }
 
     // Default the next route to the login form
-    const parseNextRoute = routes[nextPath.get('path')] || LoginForm.parseRoute
+    const parseNextRoute = routes[nextPath.get('path')] || RenderLoginForm.parseRoute
 
     return {
       componentAtTop,

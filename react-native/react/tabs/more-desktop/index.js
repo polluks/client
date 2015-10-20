@@ -1,23 +1,23 @@
 'use strict'
 
-import React, { Component } from 'react'
-//import commonStyles from '../../styles/common'
+import React, { Component, ListView, StyleSheet, View, Text } from 'react-native'
+import commonStyles from '../../styles/common'
 import * as LoginActions from '../../actions/login'
 import * as SearchActions from '../../actions/search'
 import { navigateTo } from '../../actions/router'
 import { pushNewProfile } from '../../actions/profile'
-//import Button from '../../common-adapters/button'
-import { List, ListItem, RaisedButton } from 'material-ui'
+import Button from '../../common-adapters/button'
 
 export default class More extends Component {
   constructor (props) {
     super(props)
-    this.state = {}
   }
 
   componentWillMount () {
-    this.setState({
-      items: [
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+
+    this.state = {
+      dataSource: ds.cloneWithRows([
         {name: 'Login', onClick: () => {
           this.props.dispatch(navigateTo(['login']))
         }},
@@ -55,31 +55,46 @@ export default class More extends Component {
         {name: 'Profile', hasChildren: true, onClick: () => {
           this.props.dispatch(pushNewProfile('test12'))
         }}
-      ]
-    })
+      ])
+    }
+  }
+
+  renderRow (rowData, sectionID, rowID) {
+    const sep = (rowID < (this.state.dataSource.getRowCount() - 1)) ? <View style={commonStyles.separator} /> : null
+
+    return (
+      <Button onPress={rowData.onClick}>
+        <View>
+          <View style={{margin: 10, flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
+            <Text>{rowData.name}</Text>
+            <Text>{rowData.hasChildren ? '>' : ''}</Text>
+          </View>
+          {sep}
+        </View>
+      </Button>
+    )
   }
 
   render () {
     return (
-      <List>
-        {this.state.items.map((title) => {
-          return <ListItem key={title.name} onClick={title.onClick}>{title.name}</ListItem>
-        })}
-      </List>
+      <View style={styles.container}>
+        <ListView
+        dataSource={this.state.dataSource}
+        renderRow={(...args) => { return this.renderRow(...args) }}
+        />
+      </View>
     )
   }
 
   static parseRoute (store, currentPath, nextPath) {
     const routes = {
-      'login': require('../../login').parseRoute,
-/*
       'about': require('./about').parseRoute,
       'developer': require('./developer').parseRoute,
       'navDebug': require('../../debug/nav-debug').parseRoute,
       'bridging': require('../../debug/bridging-tabs').parseRoute,
       'qr': require('../../qr').parseRoute,
+      'login': require('../../login').parseRoute,
       'login2': require('../../login2').parseRoute
-*/
     }
 
     const componentAtTop = {
@@ -93,3 +108,16 @@ export default class More extends Component {
     }
   }
 }
+
+More.propTypes = {
+  dispatch: React.PropTypes.func.isRequired
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    backgroundColor: '#F5FCFF'
+  }
+})

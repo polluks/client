@@ -111,6 +111,8 @@ class MetaNavigator extends Base {
 
     let {componentAtTop, routeStack} = this.getComponentAtTop(rootRouteParser, store, uri)
 
+    console.log('componentAtTop')
+    console.log(componentAtTop)
     return React.createElement(connect(componentAtTop.mapStateToProps || (state => state))(componentAtTop.component), {...componentAtTop.props})
   }
 }
