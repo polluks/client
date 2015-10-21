@@ -1,5 +1,9 @@
 'use strict'
 /* @flow */
 
-import React from 'react'
+import * as React from 'react'
 export default React
+
+export const View = React.DOM.div
+export const Text = React.DOM.p
+export const StyleSheet = (styles) => styles

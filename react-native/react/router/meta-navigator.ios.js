@@ -5,11 +5,12 @@
  * todo(mm) explain why we need a meta navigator
  */
 
-import React, { Component, View } from 'react-native'
-import { connect } from 'react-redux/native'
+import React, { Component, View } from '../base-react'
+import BaseComponent from '../base-component'
+import { connect } from '../base-redux'
 import Immutable from 'immutable'
 
-class MetaNavigator extends Component {
+class MetaNavigator extends BaseComponent {
   constructor () {
     super()
 
