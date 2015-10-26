@@ -2,6 +2,8 @@ machine:
   node:
     version: 4.2.1
   environment:
+    # We've hit the memory limit with the emulator. Hopefully this fixes it
+    GRADLE_OPTS: -Xmx512m -XX:MaxPermSize=512m
     GOROOT: $HOME/go
     GOPATH: $HOME/go-path
     PATH: $GOROOT/bin:$PATH
@@ -32,10 +34,10 @@ dependencies:
     - echo y | android update sdk --all --no-ui --filter "build-tools-23.0.1,android-23,extra-android-support"
 test:
   override:
-    # wait for it to have booted
-    - circle-android wait-for-boot
     # Build a debug version of the app
     - (cd android && ./gradlew assembleDebug)
+    # wait for android to have booted
+    - circle-android wait-for-boot
     # run tests  against the emulator.
     - (cd android && ./gradlew connectedAndroidTest)
     # copy the build outputs to artifacts
