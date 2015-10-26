@@ -4,6 +4,8 @@ machine:
   environment:
     # We've hit the memory limit with the emulator. Hopefully this fixes it
     GRADLE_OPTS: -Xmx512m -XX:MaxPermSize=512m
+    # Let ADB take its sweet time so we don't get UnResponsive errors: http://goo.gl/gUZMjI
+    ADB_INSTALL_TIMEOUT: 8
     GOROOT: $HOME/go
     GOPATH: $HOME/go-path
     PATH: $GOROOT/bin:$PATH
