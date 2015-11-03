@@ -26,7 +26,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename=keybase_setup
+OutputBaseFilename=keybase_setup{#MyAppVersion}
 SetupIconFile={#MyGoPath}src\github.com\keybase\keybase\public\images\favicon.ico
 Compression=lzma
 SolidCompression=yes
@@ -36,13 +36,13 @@ UninstallDisplayIcon={app}\keybase.exe
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\bin\keybase.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\bin\windows_386\keybase.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{userstartup}\Keybase"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Parameters: "service"
+Name: "{userstartup}\Keybase"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Flags: runminimized; Parameters: "service"
 Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"
 
 [Registry]
