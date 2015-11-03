@@ -8,7 +8,7 @@
 #define MyAppExeName "keybase.exe"
 #define MyGoPath GetEnv('GOPATH')
 #if MyGoPath == ""
-#define MyGoPath "blah"
+#define MyGoPath "c:\work\"
 #endif
 
 [Setup]
@@ -43,6 +43,7 @@ Source: "C:\work\bin\keybase.exe"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 Name: "{userstartup}\Keybase"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Parameters: "service"
+Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"
 
 [Registry]
 Root: "HKCU"; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Keybase.exe"; ValueType: string; ValueData: "{app}\Keybase.exe"; Flags: uninsdeletekey
