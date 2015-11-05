@@ -36,13 +36,12 @@ UninstallDisplayIcon={app}\keybase.exe
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\bin\windows_386\keybase.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\..\..\..\bin\windows_386\keybase.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"; Parameters: "/K ""set PATH=%PATH%;{app}"""
+Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"; IconFilename: "{app}\{#MyAppExeName}"; Parameters: "/K ""set PATH=%PATH%;{app}"""
 
 [Registry]
 Root: "HKCU"; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Keybase.exe"; ValueType: string; ValueData: "{app}\Keybase.exe"; Flags: uninsdeletekey
@@ -53,8 +52,8 @@ WelcomeLabel2=This will install [name/ver] on your computer.
 [Run]
 Filename: "{app}\keybase.exe"; Parameters: "service"; WorkingDir: "{app}"; Flags: postinstall runhidden nowait; Description: "Start Keybase service"
 
-[UninstallRun]
-Filename: "{app}\keybase.exe"; Parameters: "ctl stop"; WorkingDir: "{app}"; Flags: skipifdoesntexist runhidden
+[UninstallDelete]
+Type: files; Name: "{userstartup}\{#MyAppName}.vbs"
 
 [Code]
 function CreateStartupScript(): boolean;
@@ -89,7 +88,7 @@ begin
   
   if not VarIsNull(WbemObjectSet) and (WbemObjectSet.Count > 0) then
   begin
-      // Launch Notepad and wait for it to terminate
+    // Launch Keybase ctl stop and wait for it to terminate
     CommandName := ExpandConstant('{app}\{#MyAppExeName}');
     Exec(CommandName, 'ctl stop', '', SW_SHOW,
       ewWaitUntilTerminated, ResultCode);
@@ -104,10 +103,10 @@ begin
     end
 end;
 
-//procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
-//begin
-//  if  CurUninstallStep=usUninstall then
-//    begin
-//         StopKeybaseService();
-//    end
-//end;
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if  CurUninstallStep=usUninstall then
+    begin
+         StopKeybaseService();
+    end
+end;
