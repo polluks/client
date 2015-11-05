@@ -42,8 +42,7 @@ Source: "C:\work\bin\windows_386\keybase.exe"; DestDir: "{app}"; Flags: ignoreve
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{userstartup}\Keybase"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Flags: runminimized; Parameters: "service"
-Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"
+Name: "{group}\{#MyAppName} CMD"; Filename: "cmd.exe"; WorkingDir: "{app}"; Parameters: "/K ""set PATH=%PATH%;{app}"""
 
 [Registry]
 Root: "HKCU"; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Keybase.exe"; ValueType: string; ValueData: "{app}\Keybase.exe"; Flags: uninsdeletekey
@@ -56,3 +55,59 @@ Filename: "{app}\keybase.exe"; Parameters: "service"; WorkingDir: "{app}"; Flags
 
 [UninstallRun]
 Filename: "{app}\keybase.exe"; Parameters: "ctl stop"; WorkingDir: "{app}"; Flags: skipifdoesntexist runhidden
+
+[Code]
+function CreateStartupScript(): boolean;
+var
+  fileName : string;
+  lines : TArrayOfString;
+begin
+  Result := true;
+  fileName := ExpandConstant('{userstartup}\{#MyAppName}.vbs');
+  SetArrayLength(lines, 4);
+
+  lines[0] := 'Dim WinScriptHost';
+  lines[1] := 'Set WinScriptHost = CreateObject("WScript.Shell")';
+  lines[2] := ExpandConstant('WinScriptHost.Run Chr(34) & "{app}\{#MyAppExeName}" & Chr(34) & " service", 0');
+  lines[3] := 'Set WinScriptHost = Nothing';
+
+  Result := SaveStringsToFile(filename,lines,true);
+  exit;
+end;
+
+procedure StopKeybaseService();
+var
+  WMIService: Variant;
+  WbemLocator: Variant;
+  WbemObjectSet: Variant;
+  ResultCode: Integer;
+  CommandName: string;
+begin
+  WbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+  WMIService := WbemLocator.ConnectServer('localhost', 'root\CIMV2');
+  WbemObjectSet := WMIService.ExecQuery(ExpandConstant('SELECT * FROM Win32_Process Where Name="{#MyAppExeName}"'));
+  
+  if not VarIsNull(WbemObjectSet) and (WbemObjectSet.Count > 0) then
+  begin
+      // Launch Notepad and wait for it to terminate
+    CommandName := ExpandConstant('{app}\{#MyAppExeName}');
+    Exec(CommandName, 'ctl stop', '', SW_SHOW,
+      ewWaitUntilTerminated, ResultCode);
+  end;
+end;
+ 
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if  CurStep=ssPostInstall then
+    begin
+         CreateStartupScript();
+    end
+end;
+
+//procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+//begin
+//  if  CurUninstallStep=usUninstall then
+//    begin
+//         StopKeybaseService();
+//    end
+//end;
