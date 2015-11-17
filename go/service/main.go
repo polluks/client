@@ -23,7 +23,7 @@ type Service struct {
 	lockPid      *libkb.LockPIDFile
 	isAutoForked bool
 	startCh      chan struct{}
-	stopCh       chan struct{}
+	stopCh       chan keybase1.ExitCode
 }
 
 func NewService(g *libkb.GlobalContext, isDaemon bool) *Service {
@@ -31,7 +31,7 @@ func NewService(g *libkb.GlobalContext, isDaemon bool) *Service {
 		Contextified: libkb.NewContextified(g),
 		isDaemon:     isDaemon,
 		startCh:      make(chan struct{}),
-		stopCh:       make(chan struct{}),
+		stopCh:       make(chan keybase1.ExitCode),
 	}
 }
 
@@ -141,7 +141,9 @@ func (d *Service) Run() (err error) {
 	if l, err = d.ConfigRPCServer(); err != nil {
 		return
 	}
-	if err = d.ListenLoopWithStopper(l); err != nil {
+	d.G().ExitCode, err = d.ListenLoopWithStopper(l)
+
+	if err != nil {
 		return
 	}
 	return
@@ -262,18 +264,18 @@ func (d *Service) ConfigRPCServer() (l net.Listener, err error) {
 	return
 }
 
-func (d *Service) Stop() {
-	d.stopCh <- struct{}{}
+func (d *Service) Stop(exitCode keybase1.ExitCode) {
+	d.stopCh <- exitCode
 }
 
-func (d *Service) ListenLoopWithStopper(l net.Listener) (err error) {
+func (d *Service) ListenLoopWithStopper(l net.Listener) (exitCode keybase1.ExitCode, err error) {
 	ch := make(chan error)
 	go func() {
 		ch <- d.ListenLoop(l)
 	}()
-	<-d.stopCh
+	exitCode = <-d.stopCh
 	l.Close()
-	return <-ch
+	return exitCode, <-ch
 }
 
 func (d *Service) ListenLoop(l net.Listener) (err error) {

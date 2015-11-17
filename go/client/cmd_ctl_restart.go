@@ -11,6 +11,7 @@ import (
 	"github.com/keybase/cli"
 	"github.com/keybase/client/go/libcmdline"
 	"github.com/keybase/client/go/libkb"
+	keybase1 "github.com/keybase/client/go/protocol"
 )
 
 func NewCmdCtlRestart(cl *libcmdline.CommandLine, g *libkb.GlobalContext) cli.Command {
@@ -47,7 +48,7 @@ func (s *CmdCtlRestart) Run() error {
 	if err != nil {
 		return err
 	}
-	if err = cli.Stop(context.TODO(), 0); err != nil {
+	if err = cli.Stop(context.TODO(), keybase1.StopArg{ExitCode: keybase1.ExitCode_RESTART}); err != nil {
 		s.G().Log.Warning("Stop failed: %s", err)
 		return err
 	}

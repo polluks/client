@@ -67,7 +67,7 @@ func FixVersionClash(g *libkb.GlobalContext, cl libkb.CommandLine) (err error) {
 	if err != nil {
 		return err
 	}
-	err = ctlCli.Stop(context.TODO(), 0)
+	err = ctlCli.Stop(context.TODO(), keybase1.StopArg{ExitCode: keybase1.ExitCode_OK})
 	if err != nil {
 		return err
 	}

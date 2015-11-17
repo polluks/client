@@ -61,6 +61,11 @@ export default {
       'error': 5,
       'critical': 6,
       'fatal': 7
+    },
+    'ExitCode': {
+      'ok': 0,
+      'notok': 2,
+      'restart': 4
     }
   },
   'debugging': {},

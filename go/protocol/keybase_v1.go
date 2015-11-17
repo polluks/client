@@ -618,8 +618,17 @@ func (c CryptoClient) UnboxBytes32(ctx context.Context, __arg UnboxBytes32Arg) (
 	return
 }
 
+type ExitCode int
+
+const (
+	ExitCode_OK      ExitCode = 0
+	ExitCode_NOTOK   ExitCode = 2
+	ExitCode_RESTART ExitCode = 4
+)
+
 type StopArg struct {
-	SessionID int `codec:"sessionID" json:"sessionID"`
+	SessionID int      `codec:"sessionID" json:"sessionID"`
+	ExitCode  ExitCode `codec:"exitCode" json:"exitCode"`
 }
 
 type LogRotateArg struct {
@@ -640,7 +649,7 @@ type DbNukeArg struct {
 }
 
 type CtlInterface interface {
-	Stop(context.Context, int) error
+	Stop(context.Context, StopArg) error
 	LogRotate(context.Context, int) error
 	SetLogLevel(context.Context, SetLogLevelArg) error
 	Reload(context.Context, int) error
@@ -662,7 +671,7 @@ func CtlProtocol(i CtlInterface) rpc.Protocol {
 						err = rpc.NewTypeError((*[]StopArg)(nil), args)
 						return
 					}
-					err = i.Stop(ctx, (*typedArgs)[0].SessionID)
+					err = i.Stop(ctx, (*typedArgs)[0])
 					return
 				},
 				MethodType: rpc.MethodCall,
@@ -739,8 +748,7 @@ type CtlClient struct {
 	Cli GenericClient
 }
 
-func (c CtlClient) Stop(ctx context.Context, sessionID int) (err error) {
-	__arg := StopArg{SessionID: sessionID}
+func (c CtlClient) Stop(ctx context.Context, __arg StopArg) (err error) {
 	err = c.Cli.Call(ctx, "keybase.1.ctl.stop", []interface{}{__arg}, nil)
 	return
 }
