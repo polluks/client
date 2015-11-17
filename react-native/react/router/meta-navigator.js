@@ -17,6 +17,14 @@ class MetaNavigator extends Component {
     }
   }
 
+  componentWillMount () {
+    console.log('meta-nav will mount here')
+  }
+
+  componentWillUnmount () {
+    console.log('meta-nav will unmount here')
+  }
+
   isParentOfRoute (routeParent, routeMaybeChild) {
     return (
       !Immutable.is(routeMaybeChild, routeParent) &&
@@ -25,6 +33,7 @@ class MetaNavigator extends Component {
   }
 
   shouldComponentUpdate (nextProps, nextState) {
+    return true
     const { store, rootComponent } = this.props
     const route = this.props.uri
     const nextRoute = nextProps.uri

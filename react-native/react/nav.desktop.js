@@ -27,6 +27,19 @@ const tabToRootRouteParse = {
 
 export default class Nav extends Component {
   _renderContent (activeTab) {
+    const foo = this.props.store.getState().tabbedRouter.getIn(['tabs', activeTab]).toObject()
+    return (
+      <div>
+        {React.createElement(
+          MetaNavigator, {
+            ...foo,
+            store: this.props.store,
+            rootComponent: tabToRootRouteParse[activeTab] || NoTab
+          }
+        )}
+      </div>
+    )
+
     return (
       <div>
         {React.createElement(
