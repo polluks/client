@@ -519,6 +519,12 @@ typedef NS_ENUM (NSInteger, KBRSignMode) {
 @property KBRUser *user;
 @end
 
+typedef NS_ENUM (NSInteger, KBRForkType) {
+	KBRForkTypeNone = 0,
+	KBRForkTypeAuto = 1,
+	KBRForkTypeWatchdog = 2,
+};
+
 @interface KBRConfig : KBRObject
 @property NSString *serverURI;
 @property NSString *socketFile;
@@ -532,6 +538,7 @@ typedef NS_ENUM (NSInteger, KBRSignMode) {
 @property NSString *versionShort;
 @property NSString *versionFull;
 @property BOOL isAutoForked;
+@property KBRForkType forkType;
 @end
 
 typedef NS_ENUM (NSInteger, KBRInstallStatus) {

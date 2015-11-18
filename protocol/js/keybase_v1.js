@@ -35,6 +35,11 @@ export default {
       'critical': 6,
       'fatal': 7
     },
+    'ForkType': {
+      'none': 0,
+      'auto': 1,
+      'watchdog': 2
+    },
     'InstallStatus': {
       'unknown': 0,
       'error': 1,

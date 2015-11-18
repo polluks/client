@@ -369,19 +369,28 @@ type GetCurrentStatusRes struct {
 	User       *User `codec:"user,omitempty" json:"user,omitempty"`
 }
 
+type ForkType int
+
+const (
+	ForkType_NONE     ForkType = 0
+	ForkType_AUTO     ForkType = 1
+	ForkType_WATCHDOG ForkType = 2
+)
+
 type Config struct {
-	ServerURI    string `codec:"serverURI" json:"serverURI"`
-	SocketFile   string `codec:"socketFile" json:"socketFile"`
-	Label        string `codec:"label" json:"label"`
-	RunMode      string `codec:"runMode" json:"runMode"`
-	GpgExists    bool   `codec:"gpgExists" json:"gpgExists"`
-	GpgPath      string `codec:"gpgPath" json:"gpgPath"`
-	Version      string `codec:"version" json:"version"`
-	Path         string `codec:"path" json:"path"`
-	ConfigPath   string `codec:"configPath" json:"configPath"`
-	VersionShort string `codec:"versionShort" json:"versionShort"`
-	VersionFull  string `codec:"versionFull" json:"versionFull"`
-	IsAutoForked bool   `codec:"isAutoForked" json:"isAutoForked"`
+	ServerURI    string   `codec:"serverURI" json:"serverURI"`
+	SocketFile   string   `codec:"socketFile" json:"socketFile"`
+	Label        string   `codec:"label" json:"label"`
+	RunMode      string   `codec:"runMode" json:"runMode"`
+	GpgExists    bool     `codec:"gpgExists" json:"gpgExists"`
+	GpgPath      string   `codec:"gpgPath" json:"gpgPath"`
+	Version      string   `codec:"version" json:"version"`
+	Path         string   `codec:"path" json:"path"`
+	ConfigPath   string   `codec:"configPath" json:"configPath"`
+	VersionShort string   `codec:"versionShort" json:"versionShort"`
+	VersionFull  string   `codec:"versionFull" json:"versionFull"`
+	IsAutoForked bool     `codec:"isAutoForked" json:"isAutoForked"`
+	ForkType     ForkType `codec:"forkType" json:"forkType"`
 }
 
 type InstallStatus int
