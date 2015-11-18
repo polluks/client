@@ -13,13 +13,12 @@ import (
 	"github.com/keybase/client/go/libkb"
 )
 
-func spawnServer(cl libkb.CommandLine, isAutoForked bool) (err error) {
+func spawnServer(cl libkb.CommandLine, isAutoForked bool) (pid int, err error) {
 
 	var files []uintptr
 	var cmd string
 	var args []string
 	var devnull, log *os.File
-	var pid int
 
 	defer func() {
 		if err != nil {
@@ -56,7 +55,7 @@ func spawnServer(cl libkb.CommandLine, isAutoForked bool) (err error) {
 
 	cmd, args, err = makeServerCommandLine(cl, isAutoForked)
 	if err != nil {
-		return err
+		return
 	}
 
 	pid, _, err = syscall.StartProcess(cmd, args, &attr)
@@ -65,5 +64,5 @@ func spawnServer(cl libkb.CommandLine, isAutoForked bool) (err error) {
 	} else {
 		G.Log.Info("Starting background server with pid=%d", pid)
 	}
-	return err
+	return
 }

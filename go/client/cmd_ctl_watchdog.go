@@ -32,53 +32,44 @@ func (c *CmdWatchdog) ParseArgv(ctx *cli.Context) error {
 }
 
 func (c *CmdWatchdog) Run() (err error) {
-	// Watch over the running service
+	// Start + watch over the running service
 	// until it goes away, which will mean one of:
 	// - crash
 	// - system shutdown
 	// - uninstall
 	// - legitimate stoppage (ctl stop)
+	// - legitimate stoppage (ctl restart)
 
 	// Testing loop:
-	// - dial pipe. Pipe up equals service up.
-	// - Do a blocking read. Server won't be writing anything,
-	//   so this is our canary for shutdown.
-	//   - If down, test existence of PidFile (maybe wait a moment).
-	//      - No PidFile: normal shutdown. We stop too.
-	//      - PidFile still there: crashed(?) Restart.
-	//        (file should be writable in that case)
+	// - start service, noting pid
+	// - Do a wait operation on the process
+	// - On return, check exit code of process
+	//    - No error: legitimate shutdown, we exit.
+	//    - Failure exit code: restart service
+	//    - Special restart command exit code:
 	//
 	// Note that we give up after 10 consecutive crashes
 
-	countdown := c.restarts
-	for {
+	for countdown := 0; countdown <= c.restarts; countdown++ {
 		// Blocking wait on service. First, there has to be a pid
 		// file, because this is a forking command.
-		var fn string
-		if fn, err = c.G().Env.GetPidFile(); err != nil {
-			return err
-		}
-		fd, err := os.Open(fn)
-		if err != nil {
-			return err
-		}
-		var pid int
-		_, err = fmt.Fscanf(fd, "%d", &pid)
-		fd.Close()
 
-		if err != nil {
+		var pid int
+		// restart server case (is this the right command line?)
+		if pid, err = spawnServer(c.G().Env.GetCommandLine(), false); err != nil {
 			return err
 		}
 
 		p, err := os.FindProcess(pid)
 		if err != nil {
+			c.G().Log.Warning("Watchdog can't find %d, exiting", pid)
 			return err
 		}
 
 		pstate, err := p.Wait()
 
 		if err != nil || pstate.Exited() == false {
-			c.G().Log.Warning("  ...with no error or exit")
+			c.G().Log.Warning("Watchdog ends service wait with no error or exit")
 			return err
 		}
 
@@ -90,22 +81,13 @@ func (c *CmdWatchdog) Run() (err error) {
 		status := pstate.Sys().(syscall.WaitStatus)
 		c.G().Log.Warning("  ...with status %v", status)
 		if status.ExitStatus() == int(keybase1.ExitCode_RESTART) {
-			// Restart. Wait a couple of seconds, then connect to the server.
+			// Service restarting. Wait a couple of seconds, then connect to the server.
 			// We happen to know the restarter waits 2 seconds.
 			c.G().Log.Warning("Watchdog sleeping and waiting for restart")
 			time.Sleep(time.Second * 3)
 			// This doesn't count against our limit
 			countdown++
 		}
-
-		if countdown <= 0 {
-			break
-		}
-		// restart server case (is this the right command line?)
-		if _, err = ForkServer(c.G(), c.G().Env.GetCommandLine(), false); err != nil {
-			return err
-		}
-		countdown--
 	}
 
 	return fmt.Errorf("Watchdog observed %d crashes in a row. NOT reforking.", c.restarts)

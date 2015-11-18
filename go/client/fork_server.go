@@ -48,7 +48,7 @@ func ForkServer(g *libkb.GlobalContext, cl libkb.CommandLine, isAutoFork bool) (
 	if err == nil {
 		g.Log.Debug("Flocked! Server must have died")
 		srv.ReleaseLock()
-		err = spawnServer(cl, isAutoFork)
+		_, err = spawnServer(cl, isAutoFork)
 		if err != nil {
 			g.Log.Errorf("Error in spawning server process: %s", err)
 			return false, err
