@@ -12,8 +12,8 @@ class RemoveDevice extends Component {
     return (
       <Render
         deviceName={this.props.device.name}
-        onCancel={() => this.props.dispatch(navigateUp())}
-        onSubmit={() => this.props.dispatch(removeDevice(this.props.device.deviceID))}
+        onCancel={this.props.navigateUp}
+        onSubmit={this.props.removeDevice}
       />
     )
   }
@@ -25,7 +25,8 @@ class RemoveDevice extends Component {
 
 RemoveDevice.propTypes = {
   device: React.PropTypes.object.isRequired,
-  dispatch: React.PropTypes.func.isRequired
+  navigateUp: React.PropTypes.func.isRequired,
+  removeDevice: React.PropTypes.func.isRequired
 }
 
 export default connect(
@@ -35,5 +36,14 @@ export default connect(
       navigateUp: () => dispatch(navigateUp()),
       removeDevice: deviceID => dispatch(removeDevice(deviceID))
     }
+  },
+  (stateProps, dispatchProps, ownProps) => {
+    return {
+      ...ownProps,
+      ...stateProps,
+      ...dispatchProps,
+      removeDevice: () => dispatchProps.removeDevice(ownProps.device.deviceID)
+    }
   }
+
 )(RemoveDevice)

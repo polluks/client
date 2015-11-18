@@ -5,15 +5,15 @@ import {connect} from '../../base-redux'
 import Login from './login'
 import Signup from './signup'
 import {routeAppend} from '../../actions/router'
-import {login} from '../../actions/login2'
+import {login} from '../../actions/login'
 import Render from './index.render'
 
 class Welcome extends Component {
   render () {
     return (
       <Render
-        onGotoLoginPage={() => this.props.dispatch(login())}
-        onGotoSignupPage={() => this.props.dispatch(routeAppend('signup'))}
+        onGotoLoginPage={this.props.onGotoLoginPage}
+        onGotoSignupPage={this.props.onGotoSignupPage}
       />
     )
   }
@@ -30,15 +30,16 @@ class Welcome extends Component {
 }
 
 Welcome.propTypes = {
-  dispatch: React.PropTypes.func.isRequired
+  onGotoLoginPage: React.PropTypes.func.isRequired,
+  onGotoSignupPage: React.PropTypes.func.isRequired
 }
 
 export default connect(
   null,
   dispatch => {
     return {
-      gotoLoginPage: () => dispatch(login()),
-      gotoSignupPage: () => dispatch(routeAppend('signup'))
+      onGotoLoginPage: () => dispatch(login()),
+      onGotoSignupPage: () => dispatch(routeAppend('signup'))
     }
   }
 )(Welcome)

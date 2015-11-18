@@ -9,9 +9,9 @@ class Register extends Component {
   render () {
     return (
       <Render
-        onGotoExistingDevicePage={() => this.props.dispatch(registerWithExistingDevice())}
-        onGotoPaperKeyPage={() => this.props.dispatch(registerWithPaperKey())}
-        onGotoUserPassPage={() => this.props.dispatch(registerWithUserPass())}
+        onGotoExistingDevicePage={this.props.onGotoExistingDevicePage}
+        onGotoPaperKeyPage={this.props.onGotoPaperKeyPage}
+        onGotoUserPassPage={this.props.onGotoUserPassPage}
       />
     )
   }
@@ -22,16 +22,18 @@ class Register extends Component {
 }
 
 Register.propTypes = {
-  dispatch: React.PropTypes.func.isRequired
+  onGotoExistingDevicePage: React.PropTypes.func.isRequired,
+  onGotoPaperKeyPage: React.PropTypes.func.isRequired,
+  onGotoUserPassPage: React.PropTypes.func.isRequired
 }
 
 export default connect(
   null,
   dispatch => {
     return {
-      gotoExistingDevicePage: () => dispatch(registerWithExistingDevice()),
-      gotoPaperKeyPage: () => dispatch(registerWithPaperKey()),
-      gotoUserPassPage: () => dispatch(registerWithUserPass())
+      onGotoExistingDevicePage: () => dispatch(registerWithExistingDevice()),
+      onGotoPaperKeyPage: () => dispatch(registerWithPaperKey()),
+      onGotoUserPassPage: () => dispatch(registerWithUserPass())
     }
   }
 )(Register)

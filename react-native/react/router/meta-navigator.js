@@ -13,18 +13,9 @@ class MetaNavigator extends Component {
   constructor (props) {
     super(props)
 
-    console.log('NOJ meta-nav will construct')
     this.state = {
       navigator: null
     }
-  }
-
-  componentWillMount () {
-    console.log('NOJ meta-nav will mount here')
-  }
-
-  componentWillUnmount () {
-    console.log('NOJ meta-nav will unmount here')
   }
 
   isParentOfRoute (routeParent, routeMaybeChild) {
