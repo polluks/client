@@ -561,6 +561,7 @@ typedef NS_ENUM (NSInteger, KBRDeviceType) {
 @property NSString *username;
 @property NSString *token;
 @property NSString *deviceSubkeyKid;
+@property NSString *deviceSibkeyKid;
 @end
 
 @interface KBRSignupRes : KBRObject
@@ -713,6 +714,11 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 @property NSString *value;
 @end
 @interface KBRSignED25519RequestParams : KBRRequestParams
+@property NSInteger sessionID;
+@property NSData *msg;
+@property NSString *reason;
+@end
+@interface KBRSignToStringRequestParams : KBRRequestParams
 @property NSInteger sessionID;
 @property NSData *msg;
 @property NSString *reason;
@@ -900,9 +906,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 @property NSString *phrase;
 @end
 @interface KBRAuthenticateRequestParams : KBRRequestParams
-@property NSString *user;
-@property NSString *deviceKID;
-@property NSString *sid;
+@property NSString *signature;
 @end
 @interface KBRPutMetadataRequestParams : KBRRequestParams
 @property NSData *mdBlock;
@@ -933,6 +937,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 @end
 @interface KBRGetKeyRequestParams : KBRRequestParams
 @property NSData *keyHalfID;
+@property NSString *deviceKID;
 @property NSDictionary *logTags;
 @end
 @interface KBRTruncateLockRequestParams : KBRRequestParams
@@ -1339,6 +1344,13 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 - (void)signED25519WithMsg:(NSData *)msg reason:(NSString *)reason completion:(void (^)(NSError *error, KBRED25519SignatureInfo *eD25519SignatureInfo))completion;
 
 /*!
+ Same as the above except the full marshelled and encoded NaclSigInfo.
+ */
+- (void)signToString:(KBRSignToStringRequestParams *)params completion:(void (^)(NSError *error, NSString *str))completion;
+
+- (void)signToStringWithMsg:(NSData *)msg reason:(NSString *)reason completion:(void (^)(NSError *error, NSString *str))completion;
+
+/*!
  Decrypt exactly 32 bytes using nacl/box with the given nonce, the given
  peer's public key, and the device's private encryption key, and return the
  decrypted data. The 'reason' parameter is used as part of the
@@ -1612,7 +1624,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 
 - (void)authenticate:(KBRAuthenticateRequestParams *)params completion:(void (^)(NSError *error, NSInteger n))completion;
 
-- (void)authenticateWithUser:(NSString *)user deviceKID:(NSString *)deviceKID sid:(NSString *)sid completion:(void (^)(NSError *error, NSInteger n))completion;
+- (void)authenticateWithSignature:(NSString *)signature completion:(void (^)(NSError *error, NSInteger n))completion;
 
 - (void)putMetadata:(KBRPutMetadataRequestParams *)params completion:(void (^)(NSError *error))completion;
 
@@ -1636,7 +1648,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 
 - (void)getKey:(KBRGetKeyRequestParams *)params completion:(void (^)(NSError *error, NSData *bytes))completion;
 
-- (void)getKeyWithKeyHalfID:(NSData *)keyHalfID logTags:(NSDictionary *)logTags completion:(void (^)(NSError *error, NSData *bytes))completion;
+- (void)getKeyWithKeyHalfID:(NSData *)keyHalfID deviceKID:(NSString *)deviceKID logTags:(NSDictionary *)logTags completion:(void (^)(NSError *error, NSData *bytes))completion;
 
 - (void)truncateLock:(KBRTruncateLockRequestParams *)params completion:(void (^)(NSError *error, BOOL b))completion;
 

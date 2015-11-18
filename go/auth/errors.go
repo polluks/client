@@ -68,3 +68,13 @@ func (e TokenExpiredError) Error() string {
 	return fmt.Sprintf("Token expired, ctime/expire_in: %d/%d, now: %d",
 		e.creationTime, e.expireIn, e.now)
 }
+
+type InvalidTokenKeyError struct {
+	ExpectedKey string
+	ReceivedKey string
+}
+
+func (e InvalidTokenKeyError) Error() string {
+	return fmt.Sprintf("Invalid token key, expected: %s, received: %s",
+		e.ExpectedKey, e.ReceivedKey)
+}

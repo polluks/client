@@ -2,7 +2,8 @@ default: build
 all: build
 
 AVRO=java -jar jar/avro-tools-1.7.7.jar idl
-ICED=node_modules/.bin/iced
+#ICED=node_modules/.bin/iced
+ICED=iced
 
 json/%.json: avdl/%.avdl
 	@ # Uncomment to convert tabs to spaces

@@ -196,6 +196,30 @@
   }];
 }
 
+- (void)signToString:(KBRSignToStringRequestParams *)params completion:(void (^)(NSError *error, NSString *str))completion {
+  NSDictionary *rparams = @{@"msg": KBRValue(params.msg), @"reason": KBRValue(params.reason)};
+  [self.client sendRequestWithMethod:@"keybase.1.crypto.signToString" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
+    if (error) {
+      completion(error, nil);
+      return;
+    }
+    NSString *result = retval ? [MTLJSONAdapter modelOfClass:NSString.class fromJSONDictionary:retval error:&error] : nil;
+    completion(error, result);
+  }];
+}
+
+- (void)signToStringWithMsg:(NSData *)msg reason:(NSString *)reason completion:(void (^)(NSError *error, NSString *str))completion {
+  NSDictionary *rparams = @{@"msg": KBRValue(msg), @"reason": KBRValue(reason)};
+  [self.client sendRequestWithMethod:@"keybase.1.crypto.signToString" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
+    if (error) {
+      completion(error, nil);
+      return;
+    }
+    NSString *result = retval ? [MTLJSONAdapter modelOfClass:NSString.class fromJSONDictionary:retval error:&error] : nil;
+    completion(error, result);
+  }];
+}
+
 - (void)unboxBytes32:(KBRUnboxBytes32RequestParams *)params completion:(void (^)(NSError *error, NSData *bytes32))completion {
   NSDictionary *rparams = @{@"encryptedBytes32": KBRValue(params.encryptedBytes32), @"nonce": KBRValue(params.nonce), @"peersPublicKey": KBRValue(params.peersPublicKey), @"reason": KBRValue(params.reason)};
   [self.client sendRequestWithMethod:@"keybase.1.crypto.unboxBytes32" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
@@ -904,14 +928,14 @@
 @implementation KBRMetadataRequest
 
 - (void)authenticate:(KBRAuthenticateRequestParams *)params completion:(void (^)(NSError *error, NSInteger n))completion {
-  NSDictionary *rparams = @{@"user": KBRValue(params.user), @"deviceKID": KBRValue(params.deviceKID), @"sid": KBRValue(params.sid)};
+  NSDictionary *rparams = @{@"signature": KBRValue(params.signature)};
   [self.client sendRequestWithMethod:@"keybase.1.metadata.authenticate" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     completion(error, 0);
   }];
 }
 
-- (void)authenticateWithUser:(NSString *)user deviceKID:(NSString *)deviceKID sid:(NSString *)sid completion:(void (^)(NSError *error, NSInteger n))completion {
-  NSDictionary *rparams = @{@"user": KBRValue(user), @"deviceKID": KBRValue(deviceKID), @"sid": KBRValue(sid)};
+- (void)authenticateWithSignature:(NSString *)signature completion:(void (^)(NSError *error, NSInteger n))completion {
+  NSDictionary *rparams = @{@"signature": KBRValue(signature)};
   [self.client sendRequestWithMethod:@"keybase.1.metadata.authenticate" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     completion(error, 0);
   }];
@@ -998,7 +1022,7 @@
 }
 
 - (void)getKey:(KBRGetKeyRequestParams *)params completion:(void (^)(NSError *error, NSData *bytes))completion {
-  NSDictionary *rparams = @{@"keyHalfID": KBRValue(params.keyHalfID), @"logTags": KBRValue(params.logTags)};
+  NSDictionary *rparams = @{@"keyHalfID": KBRValue(params.keyHalfID), @"deviceKID": KBRValue(params.deviceKID), @"logTags": KBRValue(params.logTags)};
   [self.client sendRequestWithMethod:@"keybase.1.metadata.getKey" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     if (error) {
       completion(error, nil);
@@ -1009,8 +1033,8 @@
   }];
 }
 
-- (void)getKeyWithKeyHalfID:(NSData *)keyHalfID logTags:(NSDictionary *)logTags completion:(void (^)(NSError *error, NSData *bytes))completion {
-  NSDictionary *rparams = @{@"keyHalfID": KBRValue(keyHalfID), @"logTags": KBRValue(logTags)};
+- (void)getKeyWithKeyHalfID:(NSData *)keyHalfID deviceKID:(NSString *)deviceKID logTags:(NSDictionary *)logTags completion:(void (^)(NSError *error, NSData *bytes))completion {
+  NSDictionary *rparams = @{@"keyHalfID": KBRValue(keyHalfID), @"deviceKID": KBRValue(deviceKID), @"logTags": KBRValue(logTags)};
   [self.client sendRequestWithMethod:@"keybase.1.metadata.getKey" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     if (error) {
       completion(error, nil);
@@ -2631,6 +2655,24 @@
 }
 @end
 
+@implementation KBRSignToStringRequestParams
+
+- (instancetype)initWithParams:(NSArray *)params {
+  if ((self = [super initWithParams:params])) {
+    self.sessionID = [params[0][@"sessionID"] integerValue];
+    self.msg = params[0][@"msg"];
+    self.reason = params[0][@"reason"];
+  }
+  return self;
+}
+
++ (instancetype)params {
+  KBRSignToStringRequestParams *p = [[self alloc] init];
+  // Add default values
+  return p;
+}
+@end
+
 @implementation KBRUnboxBytes32RequestParams
 
 - (instancetype)initWithParams:(NSArray *)params {
@@ -3418,9 +3460,7 @@
 
 - (instancetype)initWithParams:(NSArray *)params {
   if ((self = [super initWithParams:params])) {
-    self.user = params[0][@"user"];
-    self.deviceKID = params[0][@"deviceKID"];
-    self.sid = params[0][@"sid"];
+    self.signature = params[0][@"signature"];
   }
   return self;
 }
@@ -3529,6 +3569,7 @@
 - (instancetype)initWithParams:(NSArray *)params {
   if ((self = [super initWithParams:params])) {
     self.keyHalfID = params[0][@"keyHalfID"];
+    self.deviceKID = params[0][@"deviceKID"];
     self.logTags = KBRValidateDictionary(params[0][@"logTags"], NSString.class);
   }
   return self;

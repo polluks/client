@@ -551,6 +551,12 @@ type SignED25519Arg struct {
 	Reason    string `codec:"reason" json:"reason"`
 }
 
+type SignToStringArg struct {
+	SessionID int    `codec:"sessionID" json:"sessionID"`
+	Msg       []byte `codec:"msg" json:"msg"`
+	Reason    string `codec:"reason" json:"reason"`
+}
+
 type UnboxBytes32Arg struct {
 	SessionID        int              `codec:"sessionID" json:"sessionID"`
 	EncryptedBytes32 EncryptedBytes32 `codec:"encryptedBytes32" json:"encryptedBytes32"`
@@ -561,6 +567,7 @@ type UnboxBytes32Arg struct {
 
 type CryptoInterface interface {
 	SignED25519(context.Context, SignED25519Arg) (ED25519SignatureInfo, error)
+	SignToString(context.Context, SignToStringArg) (string, error)
 	UnboxBytes32(context.Context, UnboxBytes32Arg) (Bytes32, error)
 }
 
@@ -580,6 +587,22 @@ func CryptoProtocol(i CryptoInterface) rpc.Protocol {
 						return
 					}
 					ret, err = i.SignED25519(ctx, (*typedArgs)[0])
+					return
+				},
+				MethodType: rpc.MethodCall,
+			},
+			"signToString": {
+				MakeArg: func() interface{} {
+					ret := make([]SignToStringArg, 1)
+					return &ret
+				},
+				Handler: func(ctx context.Context, args interface{}) (ret interface{}, err error) {
+					typedArgs, ok := args.(*[]SignToStringArg)
+					if !ok {
+						err = rpc.NewTypeError((*[]SignToStringArg)(nil), args)
+						return
+					}
+					ret, err = i.SignToString(ctx, (*typedArgs)[0])
 					return
 				},
 				MethodType: rpc.MethodCall,
@@ -610,6 +633,11 @@ type CryptoClient struct {
 
 func (c CryptoClient) SignED25519(ctx context.Context, __arg SignED25519Arg) (res ED25519SignatureInfo, err error) {
 	err = c.Cli.Call(ctx, "keybase.1.crypto.signED25519", []interface{}{__arg}, &res)
+	return
+}
+
+func (c CryptoClient) SignToString(ctx context.Context, __arg SignToStringArg) (res string, err error) {
+	err = c.Cli.Call(ctx, "keybase.1.crypto.signToString", []interface{}{__arg}, &res)
 	return
 }
 
@@ -2417,9 +2445,7 @@ type FolderUsersResponse struct {
 }
 
 type AuthenticateArg struct {
-	User      UID    `codec:"user" json:"user"`
-	DeviceKID KID    `codec:"deviceKID" json:"deviceKID"`
-	Sid       string `codec:"sid" json:"sid"`
+	Signature string `codec:"signature" json:"signature"`
 }
 
 type PutMetadataArg struct {
@@ -2456,6 +2482,7 @@ type PutKeysArg struct {
 
 type GetKeyArg struct {
 	KeyHalfID []byte            `codec:"keyHalfID" json:"keyHalfID"`
+	DeviceKID string            `codec:"deviceKID" json:"deviceKID"`
 	LogTags   map[string]string `codec:"logTags" json:"logTags"`
 }
 
@@ -2475,7 +2502,7 @@ type PingArg struct {
 }
 
 type MetadataInterface interface {
-	Authenticate(context.Context, AuthenticateArg) (int, error)
+	Authenticate(context.Context, string) (int, error)
 	PutMetadata(context.Context, PutMetadataArg) error
 	GetMetadata(context.Context, GetMetadataArg) (MetadataResponse, error)
 	RegisterForUpdates(context.Context, RegisterForUpdatesArg) error
@@ -2503,7 +2530,7 @@ func MetadataProtocol(i MetadataInterface) rpc.Protocol {
 						err = rpc.NewTypeError((*[]AuthenticateArg)(nil), args)
 						return
 					}
-					ret, err = i.Authenticate(ctx, (*typedArgs)[0])
+					ret, err = i.Authenticate(ctx, (*typedArgs)[0].Signature)
 					return
 				},
 				MethodType: rpc.MethodCall,
@@ -2671,7 +2698,8 @@ type MetadataClient struct {
 	Cli GenericClient
 }
 
-func (c MetadataClient) Authenticate(ctx context.Context, __arg AuthenticateArg) (res int, err error) {
+func (c MetadataClient) Authenticate(ctx context.Context, signature string) (res int, err error) {
+	__arg := AuthenticateArg{Signature: signature}
 	err = c.Cli.Call(ctx, "keybase.1.metadata.authenticate", []interface{}{__arg}, &res)
 	return
 }
@@ -4279,6 +4307,7 @@ type Session struct {
 	Username        string `codec:"username" json:"username"`
 	Token           string `codec:"token" json:"token"`
 	DeviceSubkeyKid KID    `codec:"deviceSubkeyKid" json:"deviceSubkeyKid"`
+	DeviceSibkeyKid KID    `codec:"deviceSibkeyKid" json:"deviceSibkeyKid"`
 }
 
 type CurrentSessionArg struct {
