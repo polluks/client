@@ -95,11 +95,23 @@ func (es *encryptStream) encryptBytes(b []byte) error {
 }
 
 func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) error {
+
+	ephemeralKey, err := sender.CreateEphemeralKey()
+	if err != nil {
+		return err
+	}
+
+	// If we have a NULL Sender key, then we really want an ephemeral key
+	// as the main encryption key.
+	if sender.GetPublicKey() == nil {
+		sender = ephemeralKey
+	}
+
 	eh := &EncryptionHeader{
 		Version:   PacketVersion1,
 		Tag:       PacketTagEncryptionHeader,
-		Sender:    sender.GetPublicKey().ToKID(),
-		Receivers: make([]receiverKeysCiphertext, 0, len(receivers)),
+		Sender:    ephemeralKey.GetPublicKey().ToKID(),
+		Receivers: make([]receiverKeysCiphertexts, 0, len(receivers)),
 	}
 	es.header = eh
 	if err := randomFill(es.sessionKey[:]); err != nil {
@@ -135,12 +147,23 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 			gid = -1
 		}
 		for _, receiver := range group {
+
+			// First make sure this key hasn't been used before
 			kid := receiver.ToKID()
 			kidString := hex.EncodeToString(kid)
 			if _, found := receiversAsSet[kidString]; found {
 				return ErrRepeatedKey(kid)
 			}
 			receiversAsSet[kidString] = struct{}{}
+
+			// Next encode the ultimate sender key for the receiver,
+			// using the ephemeral key.
+			nonce.writeCounter32(i)
+			i++
+			ske, err := ephemeralKey.Box(receiver, &nonce, sender.GetPublicKey().ToKID())
+			if err != nil {
+				return err
+			}
 
 			pt := receiverKeysPlaintext{
 				GroupID:    gid,
@@ -160,9 +183,10 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 				return err
 			}
 
-			rkc := receiverKeysCiphertext{
-				KID:  kid,
-				Keys: ptec,
+			rkc := receiverKeysCiphertexts{
+				KID:    kid,
+				Keys:   ptec,
+				Sender: ske,
 			}
 			eh.Receivers = append(eh.Receivers, rkc)
 		}
