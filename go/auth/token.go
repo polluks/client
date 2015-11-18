@@ -88,31 +88,31 @@ func VerifyToken(signature, tokenType string, maxExpireIn int) (*Token, error) {
 	}
 	if key.GetKID() != t.KID() {
 		return nil, InvalidTokenKeyError{
-			ExpectedKey: key.GetKID().String(),
-			ReceivedKey: t.KID().String(),
+			expected: key.GetKID().String(),
+			received: t.KID().String(),
 		}
 	}
 	if tokenType != t.Type() {
 		return nil, InvalidTokenTypeError{
-			ExpectedTokenType: tokenType,
-			ReceivedTokenType: t.Type(),
+			expected: tokenType,
+			received: t.Type(),
 		}
 	}
 	remaining := t.TimeRemaining()
 	if remaining > maxExpireIn {
 		return nil, MaxTokenExpiresError{
-			CreationTime: t.CreationTime,
-			ExpireIn:     t.ExpireIn,
-			Now:          time.Now().Unix(),
-			MaxExpireIn:  maxExpireIn,
-			Remaining:    remaining,
+			creationTime: t.CreationTime,
+			expireIn:     t.ExpireIn,
+			now:          time.Now().Unix(),
+			maxExpireIn:  maxExpireIn,
+			remaining:    remaining,
 		}
 	}
 	if remaining <= 0 {
 		return nil, TokenExpiredError{
-			CreationTime: t.CreationTime,
-			ExpireIn:     t.ExpireIn,
-			Now:          time.Now().Unix(),
+			creationTime: t.CreationTime,
+			expireIn:     t.ExpireIn,
+			now:          time.Now().Unix(),
 		}
 	}
 	return t, nil
