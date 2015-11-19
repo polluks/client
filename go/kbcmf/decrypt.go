@@ -158,7 +158,7 @@ func (ds *decryptStream) processEncryptionHeader(hdr *EncryptionHeader) error {
 		return err
 	}
 
-	// Lookup the sender's secret key in our keyring, and import
+	// Lookup the sender's public key in our keyring, and import
 	// it for use. However, if the sender key is the same as the ephemeral
 	// key, then assume "anonymous mode", so use the already imported anonymous
 	// key.
