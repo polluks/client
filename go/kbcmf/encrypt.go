@@ -94,16 +94,52 @@ func (es *encryptStream) encryptBytes(b []byte) error {
 	return nil
 }
 
+// Do some sanity checking on the receiver group. Check that receivers
+// aren't sent to twice; check that there aren't any empty receiver
+// groups. In particular, we need r[0][0] to be a valid PublicKey.
+func (es *encryptStream) checkReceivers(r [][]BoxPublicKey) error {
+
+	if len(r) == 0 {
+		return ErrBadReceivers
+	}
+
+	// Make sure that each receiver only shows up in the set once.
+	receiversAsSet := make(map[string]struct{})
+
+	for _, g := range r {
+
+		if len(g) == 0 {
+			return ErrBadReceivers
+		}
+
+		for _, receiver := range g {
+
+			// Make sure this key hasn't been used before
+			kid := receiver.ToKID()
+			kidString := hex.EncodeToString(kid)
+			if _, found := receiversAsSet[kidString]; found {
+				return ErrRepeatedKey(kid)
+			}
+			receiversAsSet[kidString] = struct{}{}
+		}
+	}
+	return nil
+}
+
 func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) error {
 
-	ephemeralKey, err := sender.CreateEphemeralKey()
+	if err := es.checkReceivers(receivers); err != nil {
+		return err
+	}
+
+	ephemeralKey, err := receivers[0][0].CreateEphemeralKey()
 	if err != nil {
 		return err
 	}
 
-	// If we have a NULL Sender key, then we really want an ephemeral key
+	// If we have a nil Sender key, then we really want the ephemeral key
 	// as the main encryption key.
-	if sender.IsNull() {
+	if sender == nil {
 		sender = ephemeralKey
 	}
 
@@ -131,9 +167,6 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 	eh.Nonce = make([]byte, nonceRandLen)
 	copy(eh.Nonce, nonce[:])
 
-	// Make sure that each receiver only shows up in the set once.
-	receiversAsSet := make(map[string]struct{})
-
 	var i uint32
 
 	for gid, group := range receivers {
@@ -147,14 +180,6 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 			gid = -1
 		}
 		for _, receiver := range group {
-
-			// First make sure this key hasn't been used before
-			kid := receiver.ToKID()
-			kidString := hex.EncodeToString(kid)
-			if _, found := receiversAsSet[kidString]; found {
-				return ErrRepeatedKey(kid)
-			}
-			receiversAsSet[kidString] = struct{}{}
 
 			// Next encode the ultimate sender key for the receiver,
 			// using the ephemeral key.
@@ -184,7 +209,7 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 			}
 
 			rkc := receiverKeysCiphertexts{
-				KID:    kid,
+				KID:    receiver.ToKID(),
 				Keys:   ptec,
 				Sender: ske,
 			}

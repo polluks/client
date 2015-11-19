@@ -135,14 +135,14 @@ func (pes *testEncryptStream) encryptBytes(b []byte) error {
 
 func (pes *testEncryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) error {
 
-	ephemeralKey, err := sender.CreateEphemeralKey()
+	ephemeralKey, err := receivers[0][0].CreateEphemeralKey()
 	if err != nil {
 		return err
 	}
 
 	// If we have a NULL Sender key, then we really want an ephemeral key
 	// as the main encryption key.
-	if sender.GetPublicKey() == nil {
+	if sender == nil {
 		sender = ephemeralKey
 	}
 

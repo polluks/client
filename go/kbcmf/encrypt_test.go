@@ -95,7 +95,7 @@ func (b boxSecretKey) Unbox(sender BoxPublicKey, nonce *Nonce, msg []byte) ([]by
 
 var kr = newKeyring()
 
-func (b boxSecretKey) CreateEphemeralKey() (BoxSecretKey, error) {
+func (b boxPublicKey) CreateEphemeralKey() (BoxSecretKey, error) {
 	pk, sk, err := box.GenerateKey(rand.Reader)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (b boxSecretKey) CreateEphemeralKey() (BoxSecretKey, error) {
 func (b boxSecretKey) IsNull() bool { return !b.isInit }
 
 func newBoxKeyNoInsert(t *testing.T) BoxSecretKey {
-	ret, err := (boxSecretKey{}).CreateEphemeralKey()
+	ret, err := (boxPublicKey{}).CreateEphemeralKey()
 	if err != nil {
 		t.Fatalf("In gen key: %s", err)
 	}
@@ -437,6 +437,30 @@ func TestRepeatedKey(t *testing.T) {
 	_, err := Seal(plaintext, sender, receivers)
 	if _, ok := err.(ErrRepeatedKey); !ok {
 		t.Fatalf("Wanted a repeated key error; got %v", err)
+	}
+}
+
+func TestEmptyReceivers(t *testing.T) {
+	sender := newBoxKey(t)
+	receivers := [][]BoxPublicKey{}
+	plaintext := randomMsg(t, 1024*3)
+	_, err := Seal(plaintext, sender, receivers)
+	if err != ErrBadReceivers {
+		t.Fatalf("Wanted error %v but got %v\n", ErrBadReceivers, err)
+	}
+}
+
+func TestEmptyReceiverGroup(t *testing.T) {
+	sender := newBoxKey(t)
+	pk := newBoxKey(t).GetPublicKey()
+	receivers := [][]BoxPublicKey{
+		[]BoxPublicKey{pk},
+		[]BoxPublicKey{},
+	}
+	plaintext := randomMsg(t, 1024*3)
+	_, err := Seal(plaintext, sender, receivers)
+	if err != ErrBadReceivers {
+		t.Fatalf("Wanted error %v but got %v\n", ErrBadReceivers, err)
 	}
 }
 
@@ -1148,10 +1172,9 @@ func TestSealAndOpenTrailingGarbage(t *testing.T) {
 }
 
 func TestAnonymousSender(t *testing.T) {
-	sender := &boxSecretKey{}
 	receivers := [][]BoxPublicKey{{newBoxKey(t).GetPublicKey()}}
 	plaintext := randomMsg(t, 1024*3)
-	ciphertext, err := Seal(plaintext, sender, receivers)
+	ciphertext, err := Seal(plaintext, nil, receivers)
 	if err != nil {
 		t.Fatal(err)
 	}

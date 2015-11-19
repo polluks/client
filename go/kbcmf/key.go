@@ -24,6 +24,10 @@ type BoxPublicKey interface {
 	// ToRawBoxKeyPointer returns this public key as a *[32]byte,
 	// for use with nacl.box.Seal
 	ToRawBoxKeyPointer() *RawBoxKey
+
+	// CreateEmphemeralKey creates an ephemeral key of the same type,
+	// but totally random.
+	CreateEphemeralKey() (BoxSecretKey, error)
 }
 
 // Nonce is a NaCl-style nonce, with 24 bytes of data, some of which can be
@@ -43,17 +47,6 @@ type BoxSecretKey interface {
 
 	// GetPublicKey gets the public key associated with this secret key.
 	GetPublicKey() BoxPublicKey
-
-	// CreateEmphemeralKey creates an ephemeral key of the same type,
-	// but totally random.
-	CreateEphemeralKey() (BoxSecretKey, error)
-
-	// IsNull() is true if this is a null key. A null key is one that should
-	// error out iif Box() or Unbox() is called on it. It is used to signal
-	// that the encryption engine should create its own ephemeral key
-	// for the purposes of encryption / decryption, to protect the
-	// sender's true identity.
-	IsNull() bool
 }
 
 // Keyring is an interface used with decryption; it is call to recover
