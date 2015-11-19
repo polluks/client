@@ -164,8 +164,7 @@ type GetBlockRes struct {
 
 type BlockRefNonce [8]byte
 type EstablishSessionArg struct {
-	User UID    `codec:"user" json:"user"`
-	Sid  string `codec:"sid" json:"sid"`
+	Signature string `codec:"signature" json:"signature"`
 }
 
 type PutBlockArg struct {
@@ -194,7 +193,7 @@ type DecBlockReferenceArg struct {
 }
 
 type BlockInterface interface {
-	EstablishSession(context.Context, EstablishSessionArg) error
+	EstablishSession(context.Context, string) error
 	PutBlock(context.Context, PutBlockArg) error
 	GetBlock(context.Context, BlockIdCombo) (GetBlockRes, error)
 	IncBlockReference(context.Context, IncBlockReferenceArg) error
@@ -216,7 +215,7 @@ func BlockProtocol(i BlockInterface) rpc.Protocol {
 						err = rpc.NewTypeError((*[]EstablishSessionArg)(nil), args)
 						return
 					}
-					err = i.EstablishSession(ctx, (*typedArgs)[0])
+					err = i.EstablishSession(ctx, (*typedArgs)[0].Signature)
 					return
 				},
 				MethodType: rpc.MethodCall,
@@ -293,7 +292,8 @@ type BlockClient struct {
 	Cli GenericClient
 }
 
-func (c BlockClient) EstablishSession(ctx context.Context, __arg EstablishSessionArg) (err error) {
+func (c BlockClient) EstablishSession(ctx context.Context, signature string) (err error) {
+	__arg := EstablishSessionArg{Signature: signature}
 	err = c.Cli.Call(ctx, "keybase.1.block.establishSession", []interface{}{__arg}, nil)
 	return
 }

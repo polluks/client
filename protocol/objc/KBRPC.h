@@ -672,8 +672,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 @property NSInteger sessionID;
 @end
 @interface KBREstablishSessionRequestParams : KBRRequestParams
-@property NSString *user;
-@property NSString *sid;
+@property NSString *signature;
 @end
 @interface KBRPutBlockRequestParams : KBRRequestParams
 @property KBRBlockIdCombo *bid;
@@ -1285,7 +1284,7 @@ typedef NS_ENUM (NSInteger, KBRPromptDefault) {
 
 - (void)establishSession:(KBREstablishSessionRequestParams *)params completion:(void (^)(NSError *error))completion;
 
-- (void)establishSessionWithUser:(NSString *)user sid:(NSString *)sid completion:(void (^)(NSError *error))completion;
+- (void)establishSessionWithSignature:(NSString *)signature completion:(void (^)(NSError *error))completion;
 
 - (void)putBlock:(KBRPutBlockRequestParams *)params completion:(void (^)(NSError *error))completion;
 

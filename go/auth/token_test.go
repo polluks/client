@@ -37,7 +37,8 @@ func TestTokenVerifyToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = checkToken(token, uid, name, keyPair.GetKID(), tokenType, expireIn, clientName, clientVersion); err != nil {
+	if err = checkToken(token, uid, name, keyPair.GetKID(),
+		tokenType, expireIn, clientName, clientVersion); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -113,7 +114,8 @@ func TestTokenTypeInvalid(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = checkToken(token, uid, name, keyPair.GetKID(), tokenType, expireIn, clientName, clientVersion); err != nil {
+	if err = checkToken(token, uid, name, keyPair.GetKID(),
+		tokenType, expireIn, clientName, clientVersion); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -121,25 +123,32 @@ func TestTokenTypeInvalid(t *testing.T) {
 func checkToken(token *Token, uid keybase1.UID, username libkb.NormalizedUsername,
 	kid keybase1.KID, tokenType string, expireIn int, clientName, clientVersion string) error {
 	if token.UID() != uid {
-		return fmt.Errorf("UID mismatch, expected: %s, got %s", uid, token.UID())
+		return fmt.Errorf("UID mismatch, expected: %s, got %s",
+			uid, token.UID())
 	}
 	if token.KID() != kid {
-		return fmt.Errorf("KID mismatch, expected: %s, got %s", kid, token.KID())
+		return fmt.Errorf("KID mismatch, expected: %s, got %s",
+			kid, token.KID())
 	}
 	if token.Username() != username {
-		return fmt.Errorf("Username mismatch, expected: %s, got %s", username, token.Username())
+		return fmt.Errorf("Username mismatch, expected: %s, got %s",
+			username, token.Username())
 	}
 	if token.Type() != tokenType {
-		return fmt.Errorf("TokenType mismatch, expected: %s, got %s", tokenType, token.Type())
+		return fmt.Errorf("TokenType mismatch, expected: %s, got %s",
+			tokenType, token.Type())
 	}
 	if token.ExpireIn != expireIn {
-		return fmt.Errorf("ExpireIn mismatch, expected: %d, got %d", expireIn, token.ExpireIn)
+		return fmt.Errorf("ExpireIn mismatch, expected: %d, got %d",
+			expireIn, token.ExpireIn)
 	}
 	if token.ClientName() != clientName {
-		return fmt.Errorf("ClientName mismatch, expected: %s, got %s", clientName, token.ClientName())
+		return fmt.Errorf("ClientName mismatch, expected: %s, got %s",
+			clientName, token.ClientName())
 	}
 	if token.ClientVersion() != clientVersion {
-		return fmt.Errorf("ClientVersion mismatch, expected: %s, got %s", clientVersion, token.ClientVersion())
+		return fmt.Errorf("ClientVersion mismatch, expected: %s, got %s",
+			clientVersion, token.ClientVersion())
 	}
 	return nil
 }

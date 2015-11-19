@@ -29,14 +29,14 @@
 @implementation KBRBlockRequest
 
 - (void)establishSession:(KBREstablishSessionRequestParams *)params completion:(void (^)(NSError *error))completion {
-  NSDictionary *rparams = @{@"user": KBRValue(params.user), @"sid": KBRValue(params.sid)};
+  NSDictionary *rparams = @{@"signature": KBRValue(params.signature)};
   [self.client sendRequestWithMethod:@"keybase.1.block.establishSession" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     completion(error);
   }];
 }
 
-- (void)establishSessionWithUser:(NSString *)user sid:(NSString *)sid completion:(void (^)(NSError *error))completion {
-  NSDictionary *rparams = @{@"user": KBRValue(user), @"sid": KBRValue(sid)};
+- (void)establishSessionWithSignature:(NSString *)signature completion:(void (^)(NSError *error))completion {
+  NSDictionary *rparams = @{@"signature": KBRValue(signature)};
   [self.client sendRequestWithMethod:@"keybase.1.block.establishSession" params:rparams sessionId:self.sessionId completion:^(NSError *error, id retval) {
     completion(error);
   }];
@@ -2482,8 +2482,7 @@
 
 - (instancetype)initWithParams:(NSArray *)params {
   if ((self = [super initWithParams:params])) {
-    self.user = params[0][@"user"];
-    self.sid = params[0][@"sid"];
+    self.signature = params[0][@"signature"];
   }
   return self;
 }
