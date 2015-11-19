@@ -103,7 +103,7 @@ func (es *encryptStream) init(sender BoxSecretKey, receivers [][]BoxPublicKey) e
 
 	// If we have a NULL Sender key, then we really want an ephemeral key
 	// as the main encryption key.
-	if sender.GetPublicKey() == nil {
+	if sender.IsNull() {
 		sender = ephemeralKey
 	}
 

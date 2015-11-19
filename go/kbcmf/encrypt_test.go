@@ -19,8 +19,9 @@ type boxPublicKey struct {
 }
 
 type boxSecretKey struct {
-	pub boxPublicKey
-	key RawBoxKey
+	pub    boxPublicKey
+	key    RawBoxKey
+	isInit bool
 }
 
 type keyring struct {
@@ -102,8 +103,11 @@ func (b boxSecretKey) CreateEphemeralKey() (BoxSecretKey, error) {
 	ret := &boxSecretKey{}
 	copy(ret.key[:], (*sk)[:])
 	copy(ret.pub.key[:], (*pk)[:])
+	ret.isInit = true
 	return ret, nil
 }
+
+func (b boxSecretKey) IsNull() bool { return !b.isInit }
 
 func newBoxKeyNoInsert(t *testing.T) BoxSecretKey {
 	ret, err := (boxSecretKey{}).CreateEphemeralKey()
@@ -1140,5 +1144,19 @@ func TestSealAndOpenTrailingGarbage(t *testing.T) {
 	_, err = Open(buf.Bytes(), kr)
 	if err != ErrTrailingGarbage {
 		t.Fatalf("Wanted 'ErrTrailingGarbage' but got %v", err)
+	}
+}
+
+func TestAnonymousSender(t *testing.T) {
+	sender := &boxSecretKey{}
+	receivers := [][]BoxPublicKey{{newBoxKey(t).GetPublicKey()}}
+	plaintext := randomMsg(t, 1024*3)
+	ciphertext, err := Seal(plaintext, sender, receivers)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = Open(ciphertext, kr)
+	if err != nil {
+		t.Fatal(err)
 	}
 }

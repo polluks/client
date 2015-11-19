@@ -42,13 +42,18 @@ type BoxSecretKey interface {
 	Unbox(sender BoxPublicKey, nonce *Nonce, msg []byte) ([]byte, error)
 
 	// GetPublicKey gets the public key associated with this secret key.
-	// If `nil` is returned, then treat this private key as a "null"
-	// public key.
 	GetPublicKey() BoxPublicKey
 
 	// CreateEmphemeralKey creates an ephemeral key of the same type,
 	// but totally random.
 	CreateEphemeralKey() (BoxSecretKey, error)
+
+	// IsNull() is true if this is a null key. A null key is one that should
+	// error out iif Box() or Unbox() is called on it. It is used to signal
+	// that the encryption engine should create its own ephemeral key
+	// for the purposes of encryption / decryption, to protect the
+	// sender's true identity.
+	IsNull() bool
 }
 
 // Keyring is an interface used with decryption; it is call to recover
